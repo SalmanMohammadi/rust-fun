@@ -14,14 +14,21 @@ fn main() {
         io::stdin().read_line(&mut n)
             .expect("Failed to read line.");
 
-    let m: u32 = m.trim().parse()
+    let mut m: u32 = m.trim().parse()
         .expect("Type a number!");
-    let n: u32 = n.trim().parse()
+    let mut n: u32 = n.trim().parse()
         .expect("Type a number!");
 
-    let  mut r = m & n;
-    while r != 0 {
-        
+    if m < n {
+        let x: u32 = n;
+        n = m;
+        m = x;
     }
-    println!("{}", r);
+    let mut r: u32 = m % n;
+    while r != 0 {
+        m = n;
+        n = r;
+        r = m % n;
+    }
+    println!("gcd:{}", n);
 }
