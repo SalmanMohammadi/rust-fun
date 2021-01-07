@@ -2,3 +2,6 @@
 *.pdf
 bin/
 *.swp
+.vscode
+target/
+*.lock

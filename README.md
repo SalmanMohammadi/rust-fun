@@ -1,2 +1,0 @@
-# rust-fun
-Learning rust.
