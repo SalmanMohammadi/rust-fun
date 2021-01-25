@@ -9,7 +9,6 @@ fn euclidean_distance(vec1: Vector2, vec2: Vector2) -> f32 {
     distance_squared.sqrt()
 }
 
-
 // checks if pos intersects wiith the rect at ((x, y), w, h)
 fn rect_intersect(pos: Vector2, (center, width, height): (Vector2, f32, f32)) -> bool {
     pos.x >= center.x - width/2.0 && pos.x <= center.x + width/2.0 
@@ -17,7 +16,6 @@ fn rect_intersect(pos: Vector2, (center, width, height): (Vector2, f32, f32)) ->
 }
 
 pub struct Population {
-    // pub mutation_rate: f32,
     rockets: Vec<Rocket>,
     mating_pool: Vec<Rocket>,
     population_size: usize,
@@ -26,8 +24,6 @@ pub struct Population {
     target: (Vector2, f32),
     rng: ThreadRng,
     obstacles: Vec<(Vector2, f32, f32)>
-    // pub matingPool: Vec<Rocket>,
-    // generations: u32
 }
 
 impl Population {
@@ -126,7 +122,7 @@ struct Rocket {
 impl Rocket {
     fn new(rng: &mut ThreadRng, lifetime: usize) -> Rocket {
         Rocket {
-            position: vec2(0.0, -50.0),
+            position: vec2(0.0, -450.0),
             velocity: vec2(0.0, 0.0),
             acceleration: vec2(0.0, 0.0),
             dna: DNA::new(lifetime, rng),
@@ -140,7 +136,7 @@ impl Rocket {
 
     fn new_from_dna(dna: DNA) -> Rocket{
         Rocket {
-            position: vec2(0.0, -50.0),
+            position: vec2(0.0, -450.0),
             velocity: vec2(0.0, 0.0),
             acceleration: vec2(0.0, 0.0),
             dna,
@@ -184,6 +180,10 @@ impl Rocket {
 
     fn calculate_fitness(&mut self, target: Vector2) {
         let distance: f32 = euclidean_distance(target, self.position);
+        //
+            // Map the sine wave functions to ranges between the boundaries of the window
+    // let x = map_range(sine, -1.0, 1.0, boundary.left(), boundary.right());
+    // let y = map_range(slowersine, -1.0, 1.0, boundary.bottom(), boundary.top());
         self.fitness = 1.0 /(distance + 1.0.pow(-16) as f32); // fix
         if self.completed {
             self.fitness *= 10.0;
@@ -209,7 +209,7 @@ impl DNA {
     fn new(lifetime: usize,  rng: &mut ThreadRng) -> DNA {
         let mut genes = Vec::<Vector2>::new();
         for _ in 0..lifetime {
-            genes.push(Vector2::from_angle(rng.gen_range(0.0..2.0*PI)) * 0.1);
+            genes.push(Vector2::from_angle(rng.gen_range(0.0..2.0*PI)) * 0.2);
         }
         DNA {
             genes
@@ -218,8 +218,7 @@ impl DNA {
 
     fn crossover(&self, partner: DNA, rng: &mut ThreadRng) -> DNA {
         let mut genes = Vec::<Vector2>::new();
-        let mid = rng.gen_range(0..self.genes.len()); //floor()?
-        // println!("mid:{}", mid);
+        let mid = rng.gen_range(0..self.genes.len());
         for i in 0..self.genes.len(){
             if i > mid {
                 genes.push(self.genes[i]);
@@ -233,7 +232,7 @@ impl DNA {
     fn mutation(&mut self, rng: &mut ThreadRng) {
         for i in 0..self.genes.len() {
             if rng.gen_range(0.0..1.0) < 0.01 {
-                self.genes[i] = Vector2::from_angle(rng.gen_range(0.0..2.0*PI)) * 0.1
+                self.genes[i] = Vector2::from_angle(rng.gen_range(0.0..2.0*PI)) * 0.2
             }
         }
     }
